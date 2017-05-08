@@ -6,8 +6,12 @@
   "scripts": {
     "test": "mocha --timeout 10000 tests"
   },
-  "author": "",
-  "license": "ISC",
+  "author": {
+    "name" : "Snow",
+    "email" : "snow@hollysydney.com",
+    "url" : "http://hol.ly/"
+  },
+  "license": "GPL",
   "repository": {
     "type": "git",
     "url": "git://github.com/queenvictoria/lexisnexis-metabase.git"
