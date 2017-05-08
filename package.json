@@ -1,22 +1,27 @@
 {
   "name": "lexisnexis-metabase",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Client for Metabase/Moreover.",
   "main": "index.js",
   "scripts": {
     "test": "mocha --timeout 10000 tests"
   },
   "author": {
-    "name" : "Snow",
-    "email" : "snow@hollysydney.com",
-    "url" : "http://hol.ly/"
+    "name": "Snow",
+    "email": "snow@hollysydney.com",
+    "url": "http://hol.ly/"
   },
   "license": "GPL",
   "repository": {
     "type": "git",
     "url": "git://github.com/queenvictoria/lexisnexis-metabase.git"
   },
-  "keywords": ["Search", "API", "Moreover", "Metabase"],
+  "keywords": [
+    "Search",
+    "API",
+    "Moreover",
+    "Metabase"
+  ],
   "dependencies": {
     "change-case": "^3.0.1",
     "lodash": "^4.17.4",
