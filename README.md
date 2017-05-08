@@ -1,3 +1,4 @@
+A node js client library for the LexisNexis Metabase/Moreover search API.
 
 ## Usage ##
 

@@ -16,6 +16,7 @@
     "type": "git",
     "url": "git://github.com/queenvictoria/lexisnexis-metabase.git"
   },
+  "keywords": ["Search", "API", "Moreover", "Metabase"],
   "dependencies": {
     "change-case": "^3.0.1",
     "lodash": "^4.17.4",
