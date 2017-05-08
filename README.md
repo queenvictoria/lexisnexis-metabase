@@ -5,7 +5,7 @@ A node js client library for the LexisNexis Metabase/Moreover search API. This r
 ## Usage ##
 
 ```Javascript
-let MetabaseSearch = require('lexisnexis-metabase').search;
+let MetabaseSearch = require('lexisnexis-metabase/search');
 let client = new MetabaseSearch({token: "[YOUR_API_KEY]"});
 
 let params = {
