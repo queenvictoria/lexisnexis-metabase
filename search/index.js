@@ -24,7 +24,7 @@ Search.prototype.URL = Search.prototype.baseURL + '/searchArticles';
 
 
 // Same as Watson Developer Cloud
-Search.prototype.query = function(params, callback) {
+Search.prototype.query = function(params, callback, errorHandler) {
   var self = this;
 
   params = params || {};
@@ -37,19 +37,29 @@ Search.prototype.query = function(params, callback) {
     params.query = self.buildQueryString(params.query);
   }
 
-  self.client.get(self.client.url.path + '?' + querystring.stringify(params), function(err, req, res, obj) {
-    assert.ifError(err);
-    // @TODO And reject the promise.
-
-    if ( typeof callback === 'function' ) {
-      callback(obj, res);
+  self.client.get(self.client.url.path + '?' + querystring.stringify(params),
+    function(err, req, res, obj) {
+      // @TODO And reject the promise.
+      if ( err ) {
+        if ( typeof errorHandler === 'function' ) {
+          errorHandler(err, res);
+        }
+        else {
+          console.error("---- errorHandler is not a function");
+          // @TODO And reject the promise.
+        }
+      }
+      else {
+        if ( typeof callback === 'function' ) {
+          callback(obj, res);
+        }
+        else {
+          console.log("---- callback is not a function");
+          // @TODO Resolve the promise
+        }
+      }
     }
-    else {
-      console.log("---- Not a Callback")
-
-      // @TODO Resolve the promise
-    }
-  });
+  );
 
   // @TODO Return the promise
 };
