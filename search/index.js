@@ -61,7 +61,7 @@ Search.prototype.query = function(params, callback, errorHandler) {
       const deferred = q.defer();
       // @TODO Insert delay.
       // @TODO Create timer
-      self._query(params)
+      self._query(params).delay(self.rateLimitInterval)
         .then(function(results) {
 
           const data = JSON.parse(results);
@@ -79,7 +79,7 @@ Search.prototype.query = function(params, callback, errorHandler) {
           console.log(`
 Retrieved ${articles.length} articles from a total of ${totalResults}.
 Wanted ${resultsMax} articles.
-Last article ID was ${last_id}.`);
+Last article ID was ${params.sequence_id}.`);
 
           deferred.resolve();
         })
