@@ -53,22 +53,28 @@ Search.prototype.query = function(params, callback, errorHandler) {
 
   // Get the first batch of results
   self.promiseWhile(
-    // When this function returns true we have finished.
+    // When this function returns false we have finished.
     function() {
-      return articles.length < resultsMax;
+      // There aren't that many results so finish up now.
+      if ( totalResults && totalResults < resultsMax )
+        return false;
+      else
+        return articles.length < resultsMax;
     },
     function () {
       const deferred = q.defer();
       // @TODO Insert delay.
       // @TODO Create timer
-      self._query(params).delay(self.rateLimitInterval)
+      // Only use a rate limit if what we want is more than max.
+      let interval = resultsMax > self.limitMax ? self.rateLimitInterval : 0;
+      self._query(params).delay(interval)
         .then(function(results) {
 
           const data = JSON.parse(results);
           totalResults = parseInt(data.totalResults);
           let last_id = 0;
 
-          if ( data.articles ) {
+          if ( data.articles && data.articles.length) {
             // Add the incoming articles to our articles.
             articles = articles.concat(data.articles);
             params.limit = resultsMax - articles.length;
