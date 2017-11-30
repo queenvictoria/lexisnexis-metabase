@@ -30,6 +30,10 @@ client.query(params, function(data, response) {
 $ env API_KEY=[YOUR_API_KEY] npm test
 ```
 
+## Changelog ##
+
+- 2017-11-30  Now supports large `limit` parameters. Metabase documentation says that 500 can be returned at a time. However our testing shows that that number is actually 200. We now use `q` to fetch multiple times and stitch the results together.
+
 ## Documentation ##
 
 * [API documentation](https://portal.moreover.com/index.html#documentation/LN-MB-technical) (requires account).
