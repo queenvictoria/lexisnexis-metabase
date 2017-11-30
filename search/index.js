@@ -49,14 +49,17 @@ Search.prototype.query = function(params, callback, errorHandler) {
   // Current results
   let articles = [];
   // A metabase parameter included in the results.
-  let totalResults = 0;
+  let totalResults;
 
   // Get the first batch of results
   self.promiseWhile(
     // When this function returns false we have finished.
     function() {
+      // There are actually no results.
+      if ( totalResults === 0 )
+        return false;
       // There aren't that many results so finish up now.
-      if ( totalResults && totalResults < resultsMax )
+      else if ( totalResults && totalResults < resultsMax )
         return false;
       else
         return articles.length < resultsMax;

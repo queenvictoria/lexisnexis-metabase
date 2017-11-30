@@ -32,6 +32,7 @@ $ env API_KEY=[YOUR_API_KEY] npm test
 
 ## Changelog ##
 
+- 2017-11-30  v1.0.10 Fix for when there are zero totalResults.
 - 2017-11-30  v1.0.9  Fix for when there aren't many totalResults. Don't wait if we don't have to.
 - 2017-11-30  v1.0.8  Respects Metabases rate limit timeout of 20 seconds.
 - 2017-11-30  v1.0.7  Now supports large `limit` parameters. Metabase documentation says that 500 can be returned at a time. However our testing shows that that number is actually 200. We now use `q` to fetch multiple times and stitch the results together.
