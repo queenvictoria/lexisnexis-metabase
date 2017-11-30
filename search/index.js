@@ -4,6 +4,7 @@ const BaseService = require('../lib/base_service');
 const assert = require('assert');
 const querystring = require('querystring');
 const _ = require('lodash');
+const q = require('q');
 const changeCase = require('change-case');
 
 /**
@@ -21,6 +22,8 @@ Search.prototype = Object.create(BaseService.prototype);
 Search.prototype.name = 'search';
 Search.prototype.version = 'v1';
 Search.prototype.URL = Search.prototype.baseURL + '/searchArticles';
+Search.prototype.rateLimitInterval = 20000;   // Delay between calls.
+Search.prototype.limitMax = 200;              // Maximum results per call. Docs say 500.
 
 
 // Same as Watson Developer Cloud
@@ -37,31 +40,88 @@ Search.prototype.query = function(params, callback, errorHandler) {
     params.query = self.buildQueryString(params.query);
   }
 
+  const resultsMax = params.limit || self.limitMax;
+
+  if ( params.limit && params.limit > self.limitMax ) {
+    console.error(`WARNING: Cannot retrieve more than ${self.limitMax} results at a time. We will loop through getting more results. This is experimental.`);
+  }
+
+  // Current results
+  let articles = [];
+  // A metabase parameter included in the results.
+  let totalResults = 0;
+
+  // Get the first batch of results
+  self.promiseWhile(
+    // When this function returns true we have finished.
+    function() {
+      return articles.length < resultsMax;
+    },
+    function () {
+      const deferred = q.defer();
+      // @TODO Insert delay.
+      // @TODO Create timer
+      self._query(params)
+        .then(function(results) {
+
+          const data = JSON.parse(results);
+          totalResults = parseInt(data.totalResults);
+          let last_id = 0;
+
+          if ( data.articles ) {
+            // Add the incoming articles to our articles.
+            articles = articles.concat(data.articles);
+            params.limit = resultsMax - articles.length;
+            // Do we have a sequenceId?
+            params.sequence_id = data.articles.pop().sequenceId;
+          }
+
+          console.log(`
+Retrieved ${articles.length} articles from a total of ${totalResults}.
+Wanted ${resultsMax} articles.
+Last article ID was ${last_id}.`);
+
+          deferred.resolve();
+        })
+        .fail(function(err) {
+          deferred.reject(err);
+        });
+
+      return deferred.promise;
+    }
+  ).then(function() {
+    const data = {
+      status: 'SUCCESS',
+      totalResults: totalResults,
+      articles: articles,
+    }
+    callback(data);
+  }).done();
+
+  return;
+}
+
+/*
+ * A single call will return up to 500 articles (maximum).
+ * Typically, calls should be scheduled 20 to 60 seconds apart,
+ * depending on the volume of content you are set to receive.
+ * You can instruct the call to only return new articles since
+ * your previous call.
+ */
+Search.prototype._query = function(params, callback) {
+  const self = this;
+  const deferred = q.defer();
+
   self.client.get(self.client.url.path + '?' + querystring.stringify(params),
     function(err, req, res, obj) {
-      // @TODO And reject the promise.
-      if ( err ) {
-        if ( typeof errorHandler === 'function' ) {
-          errorHandler(err, res);
-        }
-        else {
-          console.error("---- errorHandler is not a function");
-          // @TODO And reject the promise.
-        }
-      }
-      else {
-        if ( typeof callback === 'function' ) {
-          callback(obj, res);
-        }
-        else {
-          console.log("---- callback is not a function");
-          // @TODO Resolve the promise
-        }
-      }
+      if ( err )
+        deferred.reject(err);
+      else
+        deferred.resolve(res.body);
     }
   );
 
-  // @TODO Return the promise
+  return deferred.promise;
 };
 
 
@@ -119,5 +179,33 @@ Search.prototype.buildQueryString = function(params) {
 
   return string;
 };
+
+
+/* https://stackoverflow.com/questions/17217736/while-loop-with-promises
+ * `condition` is a function that returns a boolean
+ * `body` is a function that returns a promise
+ * returns a promise for the completion of the loop
+ */
+Search.prototype.promiseWhile = function(condition, body) {
+    var done = q.defer();
+
+    function loop() {
+        // When the result of calling `condition` is no longer true, we are
+        // done.
+        if (!condition()) return done.resolve();
+        // Use `when`, in case `body` does not return a promise.
+        // When it completes loop again otherwise, if it fails, reject the
+        // done promise
+        q.when(body(), loop, done.reject);
+    }
+
+    // Start running the loop in the next tick so that this function is
+    // completely async. It would be unexpected if `body` was called
+    // synchronously the first time.
+    q.nextTick(loop);
+
+    // The promise
+    return done.promise;
+}
 
 module.exports = Search;
