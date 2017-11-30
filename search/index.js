@@ -66,7 +66,7 @@ Search.prototype.query = function(params, callback, errorHandler) {
       // @TODO Insert delay.
       // @TODO Create timer
       // Only use a rate limit if what we want is more than max.
-      let interval = resultsMax > self.limitMax ? self.rateLimitInterval : 0;
+      let interval = params.limit > self.limitMax ? self.rateLimitInterval : 0;
       self._query(params).delay(interval)
         .then(function(results) {
 
