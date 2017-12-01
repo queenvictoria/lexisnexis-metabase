@@ -59,22 +59,23 @@ Search.prototype.query = function(params, callback, errorHandler) {
       if ( totalResults === 0 )
         return false;
       // There aren't that many results so finish up now.
-      else if ( totalResults && totalResults < resultsMax )
+      else if ( totalResults && totalResults < resultsMax && articles.length >= totalResults )
         return false;
       else
-        return articles.length < resultsMax;
+        return parseInt(articles.length) < parseInt(resultsMax);
     },
     function () {
       const deferred = q.defer();
-      // @TODO Insert delay.
-      // @TODO Create timer
       // Only use a rate limit if what we want is more than max.
       let interval = params.limit > self.limitMax ? self.rateLimitInterval : 0;
+      // If there are only a few results remaining then remove the delay.
+      if ( totalResults && totalResults - articles.length < self.limitMax ) interval = 0;
       self._query(params).delay(interval)
         .then(function(results) {
 
           const data = JSON.parse(results);
-          totalResults = parseInt(data.totalResults);
+          // Don't update total results if it already exists.
+          totalResults = totalResults || parseInt(data.totalResults);
           let last_id = 0;
 
           if ( data.articles && data.articles.length) {
@@ -86,7 +87,7 @@ Search.prototype.query = function(params, callback, errorHandler) {
           }
 
           console.log(`
-Retrieved ${articles.length} articles from a total of ${totalResults}.
+Retrieved ${articles.length} articles total from an available ${totalResults}.
 Wanted ${resultsMax} articles.
 Last article ID was ${params.sequence_id}.`);
 
