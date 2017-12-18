@@ -1,6 +1,6 @@
 {
   "name": "lexisnexis-metabase",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "Client for Metabase/Moreover.",
   "main": "index.js",
   "scripts": {
