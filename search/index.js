@@ -1,7 +1,6 @@
 'use strict';
 
 const BaseService = require('../lib/base_service');
-const assert = require('assert');
 const querystring = require('querystring');
 const _ = require('lodash');
 const q = require('q');
