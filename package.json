@@ -4,7 +4,7 @@
   "description": "Client for Metabase/Moreover.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --timeout 10000 tests"
+    "test": "mocha --timeout 60000 tests"
   },
   "author": {
     "name": "Snow",

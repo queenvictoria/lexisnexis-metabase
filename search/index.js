@@ -42,7 +42,7 @@ Search.prototype.query = function(params, callback, errorHandler) {
   const resultsMax = params.limit || self.limitMax;
 
   if ( params.limit && params.limit > self.limitMax ) {
-    console.error(`WARNING: Cannot retrieve more than ${self.limitMax} results at a time. We will loop through getting more results. This is experimental.`);
+    console.warn(`WARNING: Cannot retrieve more than ${self.limitMax} results at a time. We will loop through getting more results. This is experimental.`);
   }
 
   // Current results
@@ -100,7 +100,12 @@ Search.prototype.query = function(params, callback, errorHandler) {
       articles: articles,
     }
     callback(data);
-  }).done();
+  })
+  .fail(function(err) {
+    console.error(err)
+    errorHandler(err);
+  })
+  .done();
 
   return;
 }
@@ -191,25 +196,25 @@ Search.prototype.buildQueryString = function(params) {
  * returns a promise for the completion of the loop
  */
 Search.prototype.promiseWhile = function(condition, body) {
-    var done = q.defer();
+  const deferred = q.defer();
 
-    function loop() {
-        // When the result of calling `condition` is no longer true, we are
-        // done.
-        if (!condition()) return done.resolve();
-        // Use `when`, in case `body` does not return a promise.
-        // When it completes loop again otherwise, if it fails, reject the
-        // done promise
-        q.when(body(), loop, done.reject);
-    }
+  function loop() {
+    // When the result of calling `condition` is no longer true, we are
+    // done.
+    if (!condition()) return deferred.resolve();
+    // Use `when`, in case `body` does not return a promise.
+    // When it completes loop again otherwise, if it fails, reject the
+    // done promise
+    q.when(body(), loop, deferred.reject);
+  }
 
-    // Start running the loop in the next tick so that this function is
-    // completely async. It would be unexpected if `body` was called
-    // synchronously the first time.
-    q.nextTick(loop);
+  // Start running the loop in the next tick so that this function is
+  // completely async. It would be unexpected if `body` was called
+  // synchronously the first time.
+  q.nextTick(loop);
 
-    // The promise
-    return done.promise;
+  // The promise
+  return deferred.promise;
 }
 
 module.exports = Search;

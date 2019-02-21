@@ -116,7 +116,32 @@ describe('Search', function() {
 
         done();
       });
+    });
 
+    it('It can query the service for more than 200 articles', function(done) {
+      let client = new Search({token: process.env.API_KEY});
+      let limit = 400;
+      let params = {
+        query: {
+          '$': 'Jacinda Adern',
+          'Source country': 'United Kingdom',
+        },
+        limit: limit,
+        format: 'json',
+      };
+
+      client.query(params, function(obj, res) {
+        expect(obj).to.be.an('object');
+
+        expect(obj.status).to.equal('SUCCESS');
+        expect(obj.articles).to.be.an('array');
+        expect(obj.articles).to.have.length.below(limit + 1);
+        expect(obj.articles).to.have.length.above(0);
+        expect(obj.articles[0]).to.have.property('id');
+        expect(obj.articles[0]).to.have.property('title');
+
+        done();
+      });
     });
   }); // end of Query
 
