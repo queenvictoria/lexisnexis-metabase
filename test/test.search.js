@@ -73,14 +73,13 @@ describe('Search', function() {
       let client = new Search({token: process.env.API_KEY});
       let limit = 2;
       let params = {
-        query: 'London AND sourceCountry:"United Kingdom"',
+        query: 'Jacinda Adern AND sourceCountry:"United Kingdom"',
         limit: limit,
         format: 'json',
       };
 
       client.query(params, function(obj, res) {
         expect(obj).to.be.an('object');
-        expect(res).to.be.an('object');
 
         expect(obj.status).to.equal('SUCCESS');
         expect(obj.articles).to.be.an('array');
@@ -98,7 +97,7 @@ describe('Search', function() {
       let limit = 2;
       let params = {
         query: {
-          '$': 'London',
+          '$': 'Jacinda Adern',
           'Source country': 'United Kingdom',
         },
         limit: limit,
@@ -107,7 +106,6 @@ describe('Search', function() {
 
       client.query(params, function(obj, res) {
         expect(obj).to.be.an('object');
-        expect(res).to.be.an('object');
 
         expect(obj.status).to.equal('SUCCESS');
         expect(obj.articles).to.be.an('array');

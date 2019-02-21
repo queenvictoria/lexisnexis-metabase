@@ -85,11 +85,6 @@ Search.prototype.query = function(params, callback, errorHandler) {
             params.sequence_id = data.articles.pop().sequenceId;
           }
 
-          console.log(`
-Retrieved ${articles.length} articles total from an available ${totalResults}.
-Wanted ${resultsMax} articles.
-Last article ID was ${params.sequence_id}.`);
-
           deferred.resolve();
         })
         .fail(function(err) {
