@@ -180,7 +180,10 @@ Search.prototype.buildQueryString = function(params) {
     else {
       // Convert to camelCase.
       key = changeCase.camelCase(key);
-      and.push(key + ':"' + value.trim() + '"');
+      // Don't add quotes if value contains [].
+      if ( value.indexOf('[') < 0 )
+        value = `"${value.trim()}"`;
+      and.push(`${key}:${value}`);
     }
   });
 
