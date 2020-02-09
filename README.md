@@ -52,4 +52,4 @@ $ env API_KEY=[YOUR_API_KEY] npm test
 
 ## Dependencies ##
 
-This is built on the excellent [restify client library](http://restify.com/#client-api). Also uses lodash and change-case. Testing with mocha.
+This is built on the excellent [restify client library](http://restify.com/docs/client-guide/). Also uses lodash and change-case. Testing with mocha.
