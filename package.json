@@ -11,7 +11,7 @@
     "email": "snow@hollysydney.com",
     "url": "http://hol.ly/"
   },
-  "license": "GPL",
+  "license": "GPL-3.0-or-later",
   "repository": {
     "type": "git",
     "url": "git://github.com/queenvictoria/lexisnexis-metabase.git"
