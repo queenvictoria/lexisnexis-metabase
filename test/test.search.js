@@ -34,6 +34,7 @@ describe('Search', function() {
     it('It should create a Search API client with access to a users\'s token', function(done) {
       let client = new Search();
       expect(client).to.be.an('object');
+
       done();
     });
 
@@ -142,7 +143,7 @@ describe('Search', function() {
 
         done();
       });
-    });
+    }).timeout(60000);
   }); // end of Query
 
 
