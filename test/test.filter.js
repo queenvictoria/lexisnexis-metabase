@@ -28,6 +28,7 @@ describe('Filter', function() {
     done();
   });
 
+
  /*
   * Create a Filter client
   */
@@ -79,7 +80,35 @@ describe('Filter', function() {
   * Fetch data from a Filter client
   */
   describe("Fetch data from a Filter client.", function() {
-    it('It can fetch data')
+    it('It can fetch data', function(done) {
+      let client = new Filter({token: API_KEY});
+      let params = {
+        // format: 'json',
+      };
+
+      client.fetch(params, function(obj, res) {
+        expect(obj).to.be.an('object');
+
+        expect(obj.status).to.equal('SUCCESS');
+        expect(obj.articles).to.be.an('array');
+        expect(obj.articles).to.have.length.below(500 + 1);
+        expect(obj.articles).to.have.length.above(0);
+        expect(obj.articles[0]).to.have.property('id');
+        expect(obj.articles[0]).to.have.property('title');
+
+        done();
+      });
+    }).timeout(60000);
+
+
+    // @FIX Delay or Metabase's rate limiter kicks in.
+    it('Needs to delay before hitting metabase again', done => {
+      setTimeout(() => {
+        console.log("Delayed for a bit.");
+        done();
+      }, 20000)
+    }).timeout(30000);
+
 
     it('It can get data from the service for more than 500 articles', function(done) {
       let client = new Filter({token: API_KEY});
@@ -99,6 +128,11 @@ describe('Filter', function() {
         expect(obj.articles[0]).to.have.property('id');
         expect(obj.articles[0]).to.have.property('title');
 
+
+        console.log(`Retrieved ${obj.articles.length} articles`);
+        for ( let i in obj.articles ) {
+          console.log(obj.articles[i].title)
+        }
         done();
       });
     }).timeout(60000);

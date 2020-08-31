@@ -37,13 +37,15 @@ Filter.prototype.URL = Filter.prototype.baseURL + '/articles';
 Filter.prototype.rateLimitInterval = 20000;   // Delay between calls.
 Filter.prototype.limitMax = 500;              // Maximum results per call. Docs say 500.
 
-
 Filter.prototype.fetch = function(params, callback, errorHandler) {
-  var self = this;
+  const self = this;
 
-  params = params || {};
+  params = params || { };
   if ( ! params.key ) {
     params.key = self.token;
+  }
+  if ( ! params.format ) {
+    params.format = self.format;
   }
 
   const resultsMax = params.limit || self.limitMax;
@@ -54,6 +56,8 @@ Filter.prototype.fetch = function(params, callback, errorHandler) {
 
   // Current results
   let articles = [];
+  let loop = 0;
+  console.log('reset loop to 0')
   // A metabase parameter included in the results.
   let totalResults;
 
@@ -61,11 +65,11 @@ Filter.prototype.fetch = function(params, callback, errorHandler) {
   self.promiseWhile(
     // When this function returns false we have finished.
     function() {
-      // There are actually no results.
-      if ( totalResults === 0 )
-        return false;
-      // There aren't that many results so finish up now.
-      else if ( totalResults && totalResults < resultsMax && articles.length >= totalResults )
+      // Always run at least once.
+      if ( loop === 0 )
+        return true;
+      // If some articles were returned, but not limitMax, then there aren't that many results so finish up now.
+      else if ( articles.length < self.limitMax )
         return false;
       else
         return parseInt(articles.length) < parseInt(resultsMax);
@@ -74,14 +78,17 @@ Filter.prototype.fetch = function(params, callback, errorHandler) {
       const deferred = q.defer();
       // Only use a rate limit if what we want is more than max.
       let interval = params.limit > self.limitMax ? self.rateLimitInterval : 0;
+      // If we are on the first loop then no delay.
+      if ( loop === 0 ) interval = 0;
       // If there are only a few results remaining then remove the delay.
-      if ( totalResults && totalResults - articles.length < self.limitMax ) interval = 0;
+      // if ( totalResults && totalResults - articles.length < self.limitMax ) interval = 0;
+      console.log(`Interval is ${interval} loop ${loop}`);
+      loop++;
       self._fetch(params).delay(interval)
         .then(function(results) {
-
           const data = JSON.parse(results);
           // Don't update total results if it already exists.
-          totalResults = totalResults || parseInt(data.totalResults);
+          // totalResults = totalResults || parseInt(data.articles.length);
           let last_id = 0;
 
           if ( data.articles && data.articles.length) {
@@ -129,7 +136,13 @@ Filter.prototype._fetch = function(params, callback) {
   const self = this;
   const deferred = q.defer();
 
-  self.client.get(self.client.url.path + '?' + querystring.stringify(params),
+  const opts = {
+    path: self.client.url.path,
+    query: params
+  }
+  console.log('_fetch called');
+
+  self.client.get(opts,
     function(err, req, res, obj) {
       if ( err )
         deferred.reject(err);

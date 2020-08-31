@@ -6,7 +6,7 @@ A node js client library for the LexisNexis Metabase/Moreover search API. This r
 
 ```Javascript
 let MetabaseSearch = require('lexisnexis-metabase/search');
-let client = new MetabaseSearch({token: "[YOUR_API_KEY]"});
+let client = new MetabaseSearch({token: "[YOUR_SEARCH_API_KEY]"});
 
 let params = {
   format: json,
@@ -32,6 +32,7 @@ $ env API_KEY=[YOUR_API_KEY] npm test
 
 ## Changelog ##
 
+- 2020-08-31  v1.0.19 Support for the Filter API.
 - 2020-02-10  v1.0.18 Upgrade licence.
 - 2020-02-10  v1.0.17 Upgrade Restify to restify-clients.
 - 2019-08-31  v1.0.16 Upgrade lodash and Mocha.
