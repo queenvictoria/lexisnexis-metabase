@@ -24,6 +24,22 @@ client.query(params, function(data, response) {
 });
 ```
 
+```Javascript
+let MetabaseFilter = require('lexisnexis-metabase/filter');
+let client = new MetabaseFilter({token: "[YOUR_FILTER_API_KEY]"});
+
+let params = {
+  format: json,
+  limit: 10
+};
+
+client.fetch(params, function(data, response) {
+  console.log(data);
+}, function(err) {
+  console.error(err);
+});
+```
+
 ## Tests ##
 
 ```Shell
@@ -32,7 +48,7 @@ $ env API_KEY=[YOUR_API_KEY] npm test
 
 ## Changelog ##
 
-- 2020-08-31  v1.0.19 Support for the Filter API.
+- 2020-08-31  v1.1.0 Support for the Filter API.
 - 2020-02-10  v1.0.18 Upgrade licence.
 - 2020-02-10  v1.0.17 Upgrade Restify to restify-clients.
 - 2019-08-31  v1.0.16 Upgrade lodash and Mocha.

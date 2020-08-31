@@ -4,11 +4,11 @@
  * Filter API https://portal.moreover.com/index.html#documentation/LN-MB-filters
  *
  * @TODO
- * - Create filters POST: https://admin-metabase.moreover.com/api/v2/filters?key={your_access_key}
- * - Read filters GET: https://admin-metabase.moreover.com/api/v2/filters?key={your_access_key}&items_per_page=25&page=0
- * - Update filters PUT: https://admin-metabase.moreover.com/api/v2/filters?key={your_access_key}
- * - Delete filters DELETE: https://admin-metabase.moreover.com/api/v2/filters?key={your_access_key}
- * - Request data from a filter http://metabase.moreover.com/api/v10/articles?key=(your API key)
+ * - [ ] Create filters POST: https://admin-metabase.moreover.com/api/v2/filters?key={your_access_key}
+ * - [ ] Read filters GET: https://admin-metabase.moreover.com/api/v2/filters?key={your_access_key}&items_per_page=25&page=0
+ * - [ ] Update filters PUT: https://admin-metabase.moreover.com/api/v2/filters?key={your_access_key}
+ * - [ ] Delete filters DELETE: https://admin-metabase.moreover.com/api/v2/filters?key={your_access_key}
+ * - [x] Request data from a filter http://metabase.moreover.com/api/v10/articles?key=(your API key)
  */
 
 

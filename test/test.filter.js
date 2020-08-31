@@ -10,9 +10,7 @@ const API_KEY = process.env.FILTER_API_KEY
 let Filter = require('../filter');
 
 // Require the dev-dependencies
-// let assert = require('chai').assert
 let expect = require('chai').expect
-// let should = chai.should();
 
 
 /*
