@@ -104,7 +104,6 @@ describe('Filter', function() {
     // @FIX Delay or Metabase's rate limiter kicks in.
     it('Needs to delay before hitting metabase again', done => {
       setTimeout(() => {
-        console.log("Delayed for a bit.");
         done();
       }, 20000)
     }).timeout(30000);
@@ -128,11 +127,6 @@ describe('Filter', function() {
         expect(obj.articles[0]).to.have.property('id');
         expect(obj.articles[0]).to.have.property('title');
 
-
-        console.log(`Retrieved ${obj.articles.length} articles`);
-        for ( let i in obj.articles ) {
-          console.log(obj.articles[i].title)
-        }
         done();
       });
     }).timeout(60000);

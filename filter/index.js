@@ -36,6 +36,8 @@ Filter.prototype.adminVersion = 'v2';
 Filter.prototype.URL = Filter.prototype.baseURL + '/articles';
 Filter.prototype.rateLimitInterval = 20000;   // Delay between calls.
 Filter.prototype.limitMax = 500;              // Maximum results per call. Docs say 500.
+// Filter API requires a sequence_id or it will return only one result.
+Filter.prototype.cursor = 0;                  // Store Metabase's sequence_id for successive calls.
 
 Filter.prototype.fetch = function(params, callback, errorHandler) {
   const self = this;
@@ -44,11 +46,16 @@ Filter.prototype.fetch = function(params, callback, errorHandler) {
   if ( ! params.key ) {
     params.key = self.token;
   }
+  // Filter API defaults to XML.
   if ( ! params.format ) {
     params.format = self.format;
   }
+  // Filter API will only return one result unless we specify sequence_id.
+  if ( ! params.sequence_id ) {
+    params.sequence_id = self.cursor;
+  }
 
-  const resultsMax = params.limit || self.limitMax;
+  const resultsMax = params.limit;
 
   if ( params.limit && params.limit > self.limitMax ) {
     console.warn(`WARNING: Cannot retrieve more than ${self.limitMax} results at a time. We will loop through getting more results. This is experimental.`);
@@ -57,7 +64,6 @@ Filter.prototype.fetch = function(params, callback, errorHandler) {
   // Current results
   let articles = [];
   let loop = 0;
-  console.log('reset loop to 0')
   // A metabase parameter included in the results.
   let totalResults;
 
@@ -80,10 +86,8 @@ Filter.prototype.fetch = function(params, callback, errorHandler) {
       let interval = params.limit > self.limitMax ? self.rateLimitInterval : 0;
       // If we are on the first loop then no delay.
       if ( loop === 0 ) interval = 0;
-      // If there are only a few results remaining then remove the delay.
-      // if ( totalResults && totalResults - articles.length < self.limitMax ) interval = 0;
-      console.log(`Interval is ${interval} loop ${loop}`);
       loop++;
+
       self._fetch(params).delay(interval)
         .then(function(results) {
           const data = JSON.parse(results);
@@ -97,6 +101,7 @@ Filter.prototype.fetch = function(params, callback, errorHandler) {
             params.limit = resultsMax - articles.length;
             // Do we have a sequenceId?
             params.sequence_id = data.articles.pop().sequenceId;
+            self.cursor = params.sequence_id;
           }
 
           deferred.resolve();
@@ -140,7 +145,6 @@ Filter.prototype._fetch = function(params, callback) {
     path: self.client.url.path,
     query: params
   }
-  console.log('_fetch called');
 
   self.client.get(opts,
     function(err, req, res, obj) {
