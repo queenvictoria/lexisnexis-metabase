@@ -4,6 +4,7 @@ const assert = require('assert');
 
 // During the test the env variable is set to test
 process.env.NODE_ENV = 'test';
+const API_KEY = process.env.SEARCH_API_KEY
 
 
 let Search = require('../search');
@@ -39,7 +40,7 @@ describe('Search', function() {
     });
 
     it('The constructor should accept an API key passed in', function(done) {
-      let client = new Search({token: process.env.API_KEY});
+      let client = new Search({token: API_KEY});
       expect(client.token).to.be.a('string');
 
       done();
@@ -47,7 +48,7 @@ describe('Search', function() {
 
     it('It should accept a call to config with an API key', function(done) {
       let client = new Search();
-      client.config({token: process.env.API_KEY});
+      client.config({token: API_KEY});
       expect(client.token).to.be.a('string');
 
       done();
@@ -55,7 +56,7 @@ describe('Search', function() {
 
     it('It should have the correct endpoint', function(done) {
       let client = new Search();
-      client.config({token: process.env.API_KEY});
+      client.config({token: API_KEY});
       expect(client).to.have.property('URL');
       expect(client.URL).to.be.a('string');
       expect(client.client.url.host).to.equal('metabase.moreover.com');
@@ -71,7 +72,7 @@ describe('Search', function() {
   */
   describe("Query a Search client.", function() {
     it('It can query the service using a string', function(done) {
-      let client = new Search({token: process.env.API_KEY});
+      let client = new Search({token: API_KEY});
       let limit = 2;
       let params = {
         query: 'Jacinda Adern AND sourceCountry:"United Kingdom"',
@@ -94,7 +95,7 @@ describe('Search', function() {
     });
 
     it('It can query the service using a complex object', function(done) {
-      let client = new Search({token: process.env.API_KEY});
+      let client = new Search({token: API_KEY});
       let limit = 2;
       let params = {
         query: {
@@ -120,7 +121,7 @@ describe('Search', function() {
     });
 
     it('It can query the service for more than 200 articles', function(done) {
-      let client = new Search({token: process.env.API_KEY});
+      let client = new Search({token: API_KEY});
       let limit = 400;
       let params = {
         query: {
